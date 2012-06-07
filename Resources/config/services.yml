@@ -1,0 +1,7 @@
+parameters:
+#    xi_breadcrumbs.example.class: Xi\Bundle\BreadcrumbsBundle\Example
+
+services:
+#    xi_breadcrumbs.example:
+#        class: %xi_breadcrumbs.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
