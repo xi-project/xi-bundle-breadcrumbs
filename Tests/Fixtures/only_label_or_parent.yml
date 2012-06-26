@@ -1,0 +1,9 @@
+only_label:
+    pattern: /
+    defaults:
+        label: "labello"
+
+only_parent:
+    pattern: /child
+    defaults:
+        parent: "only_label"

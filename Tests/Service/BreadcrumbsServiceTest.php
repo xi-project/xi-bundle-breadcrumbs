@@ -74,20 +74,11 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      * @test
      * @group service
      */
-    public function testGetBreadcrumbsForRouteWithoutParent()
+    public function testGetBreadcrumbsForRouteWithOnlyLabelOrParent()
     {
-        $route = new Route('/home', array('label' => 'ignored'));
-        $this->assertEquals(array(), $this->service->getBreadcrumbs($route));
-    }
-
-    /**
-     * @test
-     * @group service
-     */
-    public function testGetBreadcrumbsForRouteWithoutLabel()
-    {
-        $route = new Route('/home', array('parent' => 'ignored'));
-        $this->assertEquals(array(), $this->service->getBreadcrumbs($route));
+        $this->service->setRouter($this->loadRouter('only_label_or_parent.yml'));
+        $this->assertEquals(array(), $this->service->getBreadcrumbs('only_label'));
+        $this->assertEquals(array('labello', 'only_parent'), $this->service->getBreadcrumbs('only_parent'));
     }
 
     /**
@@ -96,7 +87,7 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      */
     public function testGetBreadcrumbsForRouteWithParent()
     {
-        $this->service->setRouter($this->loadRouter('oneparent.yml'));
+        $this->service->setRouter($this->loadRouter('simple.yml'));
 
         $breadcrumbs = array('root', 'foo');
         $this->assertEquals($breadcrumbs, $this->service->getBreadcrumbs('foo'));
@@ -108,18 +99,58 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      */
     public function testGetBreadcrumbsForRouteWithParams()
     {
-        $this->service->setRouter($this->loadRouter('oneparent.yml'));
+        $this->service->setRouter($this->loadRouter('simple.yml'));
 
-        $breadcrumbs = array('root', 'foo', 'bar {slug}');
+        $slug = 'b1-1';
+        $breadcrumbs = array('root', 'foo', "bar ${slug}");
 
         $this->assertEquals(
             $breadcrumbs,
             $this->service->getBreadcrumbs(
                 'bar',
-                null,
-                array('slug' => 'b1-1')
+                array('slug' => $slug)
             )
         );
+    }
+
+    /**
+     * @test
+     * @group service
+     */
+    public function testGetParents()
+    {
+        $router = $this->service->setRouter($this->loadRouter('parents.yml'));
+        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
+
+        $rc = $router->getRouteCollection();
+
+        $this->assertEquals(
+            array('root', 'some'),
+            $this->service->getParents($rc->get('path'))
+        );
+
+        $this->assertEquals(
+            array('unrooted'),
+            $this->service->getParents($rc->get('way'))
+        );
+
+        $this->assertEquals(array(), $this->service->getParents($rc->get('root')));
+        $this->assertEquals(array(), $this->service->getParents($rc->get('notfound')));
+    }
+
+    /**
+     * @test
+     * @group service
+     */
+    public function testGetLabel()
+    {
+        $router = $this->service->setRouter($this->loadRouter('labels.yml'));
+        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
+
+        $rc = $router->getRouteCollection();
+
+        $this->assertEquals('home', $this->service->getLabel('root'));
+        $this->assertEquals('lussu', $this->service->getLabel('lussu'));
     }
 
     /**
