@@ -1,0 +1,21 @@
+root:
+    pattern:   /
+    defaults:  { _controller: XiBreadcrumbsBundle:Default:index }
+
+foo:
+    pattern:   /foo
+    defaults:
+        _controller: XiBreadcrumbsBundle:Default:index,
+        label: "foo",
+        parent: "root"
+
+bar:
+    pattern:   /foo/bar/{slug}
+    defaults:
+        _controller: XiBreadcrumbsBundle:Default:index,
+        label: "bar {slug}",
+        parent: "foo"
+    requirements:
+        _method: GET
+        slug: "[a-d]1?-\d+"
+
