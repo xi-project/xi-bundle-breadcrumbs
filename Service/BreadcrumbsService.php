@@ -2,6 +2,7 @@
 
 namespace Xi\Bundle\BreadcrumbsBundle\Service;
 
+use \InvalidArgumentException;
 use \Symfony\Component\DependencyInjection\ContainerInterface;
 use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use \Symfony\Component\Routing\Route;
@@ -50,36 +51,50 @@ class BreadcrumbsService
      */
     public function getBreadcrumbs($name, array $params = array())
     {
-        if (!$route = $this->getRoute($name)) {
-            return array(); // fail quickly if not found
-        }
+        $route = $this->getRoute($name);
+        $parents = $this->getParents($name);
 
-        if ($route && $route->hasDefault('parent')) {
-            return array_merge(
-                (array) $this->getParents($route, $params),
-                (array) $this->getLabel($name, $params)
-            );
+        if ($route && $parents) {
+            foreach (
+                array_merge($parents, array($name)) as $n
+            ) {
+                $breadcrumbs[] = $this->getLabel($n, $params);
+            }
+            return $breadcrumbs;
         } else {
-            return array();
+            return array(); // fail quickly if not found
         }
     }
 
     /**
-     * @param Route|null $route
-     *
+     * @param string $route
      * @return array
      */
-    public function getParents($route, array $params = array())
+    public function getParents($route)
     {
-        if ($route && $route->hasDefault('parent') &&
-            $parent = $route->getDefault('parent')
-        ) {
-            return array_merge(
-                (array) $this->getParents($this->getRoute($parent), $params),
-                (array) $this->getLabel($parent, $params)
-            );
+        $parents = array();
+        $parent = $this->getParent($route);
+
+        // Prevents circular loops by checking array_key_exists
+        while ($parent && $parent !== $route && !array_key_exists($parent, $parents)) {
+            $parents[$parent] = count($parents);
+            $parent = $this->getParent($parent);
         }
-        return array();
+
+        return array_reverse(array_flip($parents));
+    }
+
+    /**
+     * @param string $name
+     * @return Route|null
+     */
+    private function getParent($name) {
+        $route = $this->getRoute($name);
+        if ($route && $route->hasDefault('parent')) {
+            return $route->getDefault('parent');
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -164,6 +179,9 @@ class BreadcrumbsService
      */
     private function getRoute($name)
     {
+        if (!is_string($name)) {
+            throw new InvalidArgumentException(__FUNCTION__ . '() only accepts route name as a string.');
+        }
         return $this->getRouter()->getRouteCollection()->get($name);
     }
 }

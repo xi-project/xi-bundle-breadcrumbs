@@ -117,25 +117,47 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      * @test
      * @group service
      */
+    public function testGetBreadcrumbsCircular()
+    {
+        $this->service->setRouter($this->loadRouter('circular.yml'));
+
+        $this->assertEquals(array(), $this->service->getBreadcrumbs('loop'));
+        $this->assertEquals(array(), $this->service->getParents('loop'));
+
+        $this->assertEquals(array('flip'), $this->service->getParents('flop'));
+        $this->assertEquals(array('flop'), $this->service->getParents('flip'));
+
+        $parents = array('c', 'a', 'd', 'r');
+        $this->assertEquals(array_slice($parents, 0, 3), $this->service->getParents('r'));
+        $this->assertEquals($parents, $this->service->getBreadcrumbs('r'));
+
+        $cycle = array('a', 'd', 'c', 'a', 'd');
+        $this->assertEquals(array_slice($cycle, 0, 3), $this->service->getBreadcrumbs('c'));
+        $this->assertEquals(array_slice($cycle, 1, 3), $this->service->getBreadcrumbs('a'));
+        $this->assertEquals(array_slice($cycle, 2, 3), $this->service->getBreadcrumbs('d'));
+    }
+
+    /**
+     * @test
+     * @group service
+     */
     public function testGetParents()
     {
         $router = $this->service->setRouter($this->loadRouter('parents.yml'));
         $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
 
-        $rc = $router->getRouteCollection();
-
         $this->assertEquals(
             array('root', 'some'),
-            $this->service->getParents($rc->get('path'))
+            $this->service->getParents('path')
         );
 
         $this->assertEquals(
             array('unrooted'),
-            $this->service->getParents($rc->get('way'))
+            $this->service->getParents('way')
         );
 
-        $this->assertEquals(array(), $this->service->getParents($rc->get('root')));
-        $this->assertEquals(array(), $this->service->getParents($rc->get('notfound')));
+        $this->assertEquals(array(), $this->service->getParents('root'));
+        $this->assertEquals(array(), $this->service->getParents('notfound'));
     }
 
     /**

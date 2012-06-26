@@ -1,0 +1,34 @@
+c:
+    pattern: /c
+    defaults:
+        parent: "d"
+
+a:
+    pattern: /a
+    defaults:
+        parent: "c"
+
+d:
+    pattern: /d
+    defaults:
+        parent: "a"
+
+r:
+    pattern: /r
+    defaults:
+        parent: "d"
+
+flip:
+    pattern: /flip
+    defaults:
+        parent: "flop"
+
+flop:
+    pattern: /flop
+    defaults:
+        parent: "flip"
+
+loop:
+    pattern: /loop
+    defaults:
+        parent: "loop"
