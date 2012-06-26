@@ -98,23 +98,6 @@ class BreadcrumbsService
      * @param string name
      * @return string
      */
-    private function getUri($name, array $params = array()) {
-        return $this->router->generate($name, $this->matchParams($name, $params));
-    }
-
-    /**
-     * @param string name
-     * @return Route|null
-     */
-    private function getRoute($name)
-    {
-        return $this->getRouter()->getRouteCollection()->get($name);
-    }
-
-    /**
-     * @param string name
-     * @return string
-     */
     public function getLabel($name, array $params = array())
     {
         if ($route = $this->getRoute($name)) {
@@ -165,5 +148,22 @@ class BreadcrumbsService
         } else {
             return array();
         }
+    }
+
+    /**
+     * @param string name
+     * @return string
+     */
+    private function getUri($name, array $params = array()) {
+        return $this->router->generate($name, $this->matchParams($name, $params));
+    }
+
+    /**
+     * @param string name
+     * @return Route|null
+     */
+    private function getRoute($name)
+    {
+        return $this->getRouter()->getRouteCollection()->get($name);
     }
 }
