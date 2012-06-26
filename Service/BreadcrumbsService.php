@@ -17,6 +17,8 @@ use \Symfony\Component\Routing\RouterInterface;
 class BreadcrumbsService
 {
 
+    const TWIG_TAG = "# ?\{([^/}]+)\} ?#";
+
     /**
      * @var ContainerInterface
      */
@@ -126,10 +128,12 @@ class BreadcrumbsService
             },
             array_keys($params)
         );
-        return preg_replace($patterns, array_values($params), $str);
+        $res = preg_replace($patterns, array_values($params), $str);
+        return preg_replace(self::TWIG_TAG, '', $res); // cleanup missing params
     }
 
     /**
+     * Returns only parameters applicable for the named route/label
      * @param string name
      * @return array
      */
@@ -137,14 +141,24 @@ class BreadcrumbsService
     {
         if ($route = $this->getRoute($name)) {
 
-            if (!$reqs = $route->getRequirements()) {
+            $reqs = $route->getRequirements();
+
+            // Get default values for missing parameters
+            foreach ($route->getDefaults() as $def => $value) {
+                if (!array_key_exists($def, $params) && array_key_exists($def, $reqs)) {
+                    $params[$def] = $value;
+                }
+            }
+
+            if (!empty($params) && $reqs) {
+                return array_intersect_key($params, $reqs);
+            } else {
                 $template = $fromLabel
                     ? $route->getDefault('label')
                     : $route->getPattern();
-                $reqs = preg_split(" ?\{([^/}]+)\} ?", $template);
+                return preg_split(self::TWIG_TAG, $template);
             }
 
-            return array_intersect_key($params, $reqs);
         } else {
             return array();
         }

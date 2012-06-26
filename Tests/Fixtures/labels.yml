@@ -16,3 +16,15 @@ loso:
         _controller: XiBreadcrumbsBundle:Default:index,
         parent: "lussu"
         label: "loso {slug}"
+    requirements:
+        slug: "[a-d]1?-\d+"
+
+tussi:
+    pattern: /lussu/tussi/{model}
+    defaults:
+        _controller: XiBreadcrumbsBundle:Default:index,
+        parent: "lussu"
+        label: "{model} tussi"
+        model: "musta"
+    requirements:
+        model: "[A-Za-z 0-9]+?( \d+)?"

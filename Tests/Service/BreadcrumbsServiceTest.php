@@ -151,6 +151,10 @@ class BreadcrumbsServiceTest extends ContainerTestCase
 
         $this->assertEquals('home', $this->service->getLabel('root'));
         $this->assertEquals('lussu', $this->service->getLabel('lussu'));
+        $this->assertEquals('loso', $this->service->getLabel('loso'));
+        $this->assertEquals('loso poski', $this->service->getLabel('loso', array('slug' => 'poski')));
+        $this->assertEquals('musta tussi', $this->service->getLabel('tussi'));
+        $this->assertEquals('Textmarker 880 tussi', $this->service->getLabel('tussi', array('model' => 'Textmarker 880')));
     }
 
     /**
