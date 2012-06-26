@@ -4,7 +4,6 @@ namespace Xi\Bundle\BreadcrumbsBundle\Service;
 
 use \Symfony\Component\DependencyInjection\ContainerInterface;
 use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use \Symfony\Component\HttpKernel\Log\LoggerInterface;
 use \Symfony\Component\Routing\Route;
 use \Symfony\Component\Routing\RouteCollection;
 use \Symfony\Component\Routing\RouterInterface;
@@ -16,7 +15,6 @@ use \Symfony\Component\Routing\RouterInterface;
  */
 class BreadcrumbsService
 {
-
     const TWIG_TAG = "# ?\{([^/}]+)\} ?#";
 
     /**
@@ -29,17 +27,10 @@ class BreadcrumbsService
      */
     protected $router;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->router = $container->get('router');
-        $this->logger = $container->get('logger');
-
     }
 
     public function getRouter()
@@ -69,11 +60,6 @@ class BreadcrumbsService
                 (array) $this->getLabel($name, $params)
             );
         } else {
-            if ($route->hasDefault('parent')) {
-                $this->logger->warn(
-                    'Please specify both label and parent for route: ' . $route->getPattern()
-                );
-            }
             return array();
         }
     }
