@@ -164,6 +164,25 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     }
 
     /**
+     * @test
+     * @depends testRouter
+     * @group service
+     */
+    public function testGetUri()
+    {
+        $router = $this->useRouter('simple.yml');
+
+        $slug = 'd-12'; $lus = '3';
+        $this->assertEquals('/', $this->service->getUri('root'));
+        $this->assertEquals('/foo', $this->service->getUri('foo'));
+        $this->assertEquals("/foo/bar/${slug}", $this->service->getUri('bar', array('slug' => $slug)));
+        $this->assertEquals(
+            "/foo/bar/${slug}/${lus}",
+            $this->service->getUri('quuz', array('slug' => $slug, 'lus' => $lus))
+        );
+    }
+
+    /**
      * Sets the router used in the BreadcrumbsService with a YAML config
      *
      * @param string @yamlFile YAML routing configuration file name

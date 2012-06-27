@@ -75,7 +75,7 @@ class BreadcrumbsService
         $parents = array();
         $parent = $this->getParent($route);
 
-        // Prevents circular loops by checking array_key_exists
+        // Prevents circular loops by checking that the key doesn't exist already
         while ($parent && $parent !== $route && !array_key_exists($parent, $parents)) {
             $parents[$parent] = count($parents);
             $parent = $this->getParent($parent);
@@ -149,6 +149,11 @@ class BreadcrumbsService
     private function matchParams($name, array $params, $fromLabel = false)
     {
         if ($route = $this->getRoute($name)) {
+
+            // Check for routes without placeholder parameters
+            if (!preg_match(self::TWIG_TAG, $route->getPattern())) {
+                return array();
+            }
 
             $reqs = $route->getRequirements();
 
