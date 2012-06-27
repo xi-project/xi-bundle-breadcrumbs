@@ -13,6 +13,9 @@ use \Symfony\Component\Routing\RouterInterface;
  * A service class to build breadcrumbs from Symfony routes.
  *
  * @author Peter Hillerström <peter.hillerstrom@soprano.fi>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 class BreadcrumbsService
 {
