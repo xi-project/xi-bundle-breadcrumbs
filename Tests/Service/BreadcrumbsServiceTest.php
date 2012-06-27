@@ -168,17 +168,17 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      * @depends testRouter
      * @group service
      */
-    public function testGetUri()
+    public function testGetUrl()
     {
         $router = $this->useRouter('simple.yml');
 
         $slug = 'd-12'; $lus = '3';
-        $this->assertEquals('/', $this->service->getUri('root'));
-        $this->assertEquals('/foo', $this->service->getUri('foo'));
-        $this->assertEquals("/foo/bar/${slug}", $this->service->getUri('bar', array('slug' => $slug)));
+        $this->assertEquals('/', $this->service->getUrl('root'));
+        $this->assertEquals('/foo', $this->service->getUrl('foo'));
+        $this->assertEquals("/foo/bar/${slug}", $this->service->getUrl('bar', array('slug' => $slug)));
         $this->assertEquals(
             "/foo/bar/${slug}/${lus}",
-            $this->service->getUri('quuz', array('slug' => $slug, 'lus' => $lus))
+            $this->service->getUrl('quuz', array('slug' => $slug, 'lus' => $lus))
         );
     }
 

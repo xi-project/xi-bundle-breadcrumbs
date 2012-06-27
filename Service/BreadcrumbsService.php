@@ -121,7 +121,7 @@ class BreadcrumbsService
      * @param string name
      * @return string
      */
-    public function getUri($name, array $params = array()) {
+    public function getUrl($name, array $params = array()) {
         return $this->router->generate($name, $this->matchParams($name, $params));
     }
 
