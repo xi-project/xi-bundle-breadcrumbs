@@ -2,17 +2,10 @@
 
 namespace Xi\Bundle\BreadcrumbsBundle\Tests\Service;
 
-use \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use \Symfony\Component\EventDispatcher\EventDispatcher;
-use \Symfony\Component\EventDispatcher\Event;
 use \Symfony\Component\Config\FileLocator;
-use \Symfony\Component\DomCrawler\Crawler;
 use \Symfony\Component\Routing\Loader\YamlFileLoader;
-use \Symfony\Component\Routing\Route;
 use \Symfony\Component\Routing\Router;
-use \Symfony\Component\Routing\RouterInterface;
-use \Symfony\Component\Routing\RouteCollection;
-use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase; // @TODO how to reuse and not copy here?
+use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
 use \Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService;
 
 
@@ -31,7 +24,6 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->service = new BreadcrumbsService($this->getContainer());
     }
 
@@ -61,65 +53,59 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      * @test
      * @group service
      */
-    public function testHasRouterAndRouteCollection()
+    public function testRouter()
     {
         $router = $this->service->getRouter();
         $this->assertInstanceOf('Symfony\Component\Routing\Router', $router);
 
-        $rc = $router->getRouteCollection();
-        $this->assertInstanceOf('Symfony\Component\Routing\RouteCollection', $rc);
+        $router = $this->useRouter('simple.yml');
+        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
     }
 
     /**
      * @test
+     * @depends testRouter
      * @group service
      */
     public function testGetBreadcrumbsForRouteWithOnlyLabelOrParent()
     {
-        $this->service->setRouter($this->loadRouter('only_label_or_parent.yml'));
+        $this->useRouter('only_label_or_parent.yml');
+
         $this->assertEquals(array(), $this->service->getBreadcrumbs('only_label'));
-        $this->assertEquals(array('labello', 'only_parent'), $this->service->getBreadcrumbs('only_parent'));
-    }
-
-    /**
-     * @test
-     * @group service
-     */
-    public function testGetBreadcrumbsForRouteWithParent()
-    {
-        $this->service->setRouter($this->loadRouter('simple.yml'));
-
-        $breadcrumbs = array('root', 'foo');
-        $this->assertEquals($breadcrumbs, $this->service->getBreadcrumbs('foo'));
-    }
-
-    /**
-     * @test
-     * @group service
-     */
-    public function testGetBreadcrumbsForRouteWithParams()
-    {
-        $this->service->setRouter($this->loadRouter('simple.yml'));
-
-        $slug = 'b1-1';
-        $breadcrumbs = array('root', 'foo', "bar ${slug}");
-
         $this->assertEquals(
-            $breadcrumbs,
-            $this->service->getBreadcrumbs(
-                'bar',
-                array('slug' => $slug)
-            )
+            array('labello', 'only_parent'),
+            $this->service->getBreadcrumbs('only_parent')
         );
     }
 
     /**
      * @test
+     * @depends testRouter
+     * @group service
+     */
+    public function testGetBreadcrumbsForRouteWithParams()
+    {
+        $this->useRouter('simple.yml');
+
+        $breadcrumbs = array('root', 'foo');
+        $this->assertEquals($breadcrumbs, $this->service->getBreadcrumbs('foo'));
+
+        $slug = 'b1-1';
+        $breadcrumbs2 = array('root', 'foo', "bar ${slug}");
+        $this->assertEquals(
+            $breadcrumbs2,
+            $this->service->getBreadcrumbs('bar', array('slug' => $slug))
+        );
+    }
+
+    /**
+     * @test
+     * @depends testRouter
      * @group service
      */
     public function testGetBreadcrumbsCircular()
     {
-        $this->service->setRouter($this->loadRouter('circular.yml'));
+        $this->useRouter('circular.yml');
 
         $this->assertEquals(array(), $this->service->getBreadcrumbs('loop'));
         $this->assertEquals(array(), $this->service->getParents('loop'));
@@ -139,12 +125,12 @@ class BreadcrumbsServiceTest extends ContainerTestCase
 
     /**
      * @test
+     * @depends testRouter
      * @group service
      */
     public function testGetParents()
     {
-        $router = $this->service->setRouter($this->loadRouter('parents.yml'));
-        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
+        $router = $this->useRouter('parents.yml');
 
         $this->assertEquals(
             array('root', 'some'),
@@ -162,14 +148,12 @@ class BreadcrumbsServiceTest extends ContainerTestCase
 
     /**
      * @test
+     * @depends testRouter
      * @group service
      */
     public function testGetLabel()
     {
-        $router = $this->service->setRouter($this->loadRouter('labels.yml'));
-        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
-
-        $rc = $router->getRouteCollection();
+        $router = $this->useRouter('labels.yml');
 
         $this->assertEquals('home', $this->service->getLabel('root'));
         $this->assertEquals('lussu', $this->service->getLabel('lussu'));
@@ -180,29 +164,16 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     }
 
     /**
-     * @param string @yamlFile YAML routing configuration file name
-     * @return RouteCollection
-     */
-    private function loadRouteCollection($yamlFile)
-    {
-        $loader = new YamlFileLoader(new FileLocator(array(__DIR__.'/../Fixtures')));
-        return $loader->load($yamlFile);
-    }
-
-    /**
+     * Sets the router used in the BreadcrumbsService with a YAML config
+     *
      * @param string @yamlFile YAML routing configuration file name
      * @return Router
      */
-    private function loadRouter($yamlFile)
+    private function useRouter($yamlFile)
     {
         $locator = new FileLocator(array(__DIR__.'/../Fixtures'));
-        /* $requestContext = new RequestContext($_SERVER['REQUEST_URI']); */
+        $router = new Router(new YamlFileLoader($locator), $yamlFile);
 
-        return new Router(
-            new YamlFileLoader($locator),
-            $yamlFile /*,
-            array('cache_dir' => __DIR__.'/cache'),
-            $requestContext */
-        );
+        return $this->service->setRouter($router);
     }
 }
