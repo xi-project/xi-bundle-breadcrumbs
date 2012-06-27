@@ -118,6 +118,14 @@ class BreadcrumbsService
     }
 
     /**
+     * @param string name
+     * @return string
+     */
+    public function getUri($name, array $params = array()) {
+        return $this->router->generate($name, $this->matchParams($name, $params));
+    }
+
+    /**
      * @param string str
      * @return string
      */
@@ -163,14 +171,6 @@ class BreadcrumbsService
         } else {
             return array();
         }
-    }
-
-    /**
-     * @param string name
-     * @return string
-     */
-    private function getUri($name, array $params = array()) {
-        return $this->router->generate($name, $this->matchParams($name, $params));
     }
 
     /**
