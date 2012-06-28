@@ -26,8 +26,8 @@ class BreadcrumbTest extends PHPUnit_Framework_TestCase
     public function testGetters()
     {
         $bc = new Breadcrumb('foo', '/bar');
-        $this->assertEquals('foo', $bc->getLabel());
-        $this->assertEquals('/bar', $bc->getUrl());
+        $this->assertEquals('foo', $bc->label);
+        $this->assertEquals('/bar', $bc->url);
     }
 
 

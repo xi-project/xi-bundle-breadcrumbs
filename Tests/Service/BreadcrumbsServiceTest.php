@@ -5,9 +5,9 @@ namespace Xi\Bundle\BreadcrumbsBundle\Tests\Service;
 use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\Routing\Loader\YamlFileLoader;
 use \Symfony\Component\Routing\Router;
-use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
+use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 use \Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService;
-
+use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
 
 /**
  * @group service
@@ -71,9 +71,16 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     {
         $this->useRouter('only_label_or_parent.yml');
 
-        $this->assertEquals(array(), $this->service->getBreadcrumbs('only_label'));
         $this->assertEquals(
-            array('labello', 'only_parent'),
+            array(),
+            $this->service->getBreadcrumbs('only_label')
+        );
+
+        $this->assertEquals(
+            array(
+                'only_label' => new Breadcrumb('labello', '/'),
+                'only_parent' => new Breadcrumb('only_parent', '/child')
+            ),
             $this->service->getBreadcrumbs('only_parent')
         );
     }
@@ -87,13 +94,20 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     {
         $this->useRouter('simple.yml');
 
-        $breadcrumbs = array('root', 'foo');
-        $this->assertEquals($breadcrumbs, $this->service->getBreadcrumbs('foo'));
-
         $slug = 'b1-1';
-        $breadcrumbs2 = array('root', 'foo', "bar ${slug}");
+        $breadcrumbs = array(
+            'root' => new Breadcrumb('root', '/'),
+            'foo' => new Breadcrumb('foo', '/foo'),
+            'bar' => new Breadcrumb("bar ${slug}", "/foo/bar/${slug}")
+        );
+
         $this->assertEquals(
-            $breadcrumbs2,
+            array_slice($breadcrumbs, 0, 2),
+            $this->service->getBreadcrumbs('foo')
+        );
+
+        $this->assertEquals(
+            $breadcrumbs,
             $this->service->getBreadcrumbs('bar', array('slug' => $slug))
         );
     }
@@ -115,12 +129,29 @@ class BreadcrumbsServiceTest extends ContainerTestCase
 
         $parents = array('c', 'a', 'd', 'r');
         $this->assertEquals(array_slice($parents, 0, 3), $this->service->getParents('r'));
-        $this->assertEquals($parents, $this->service->getBreadcrumbs('r'));
 
-        $cycle = array('a', 'd', 'c', 'a', 'd');
-        $this->assertEquals(array_slice($cycle, 0, 3), $this->service->getBreadcrumbs('c'));
-        $this->assertEquals(array_slice($cycle, 1, 3), $this->service->getBreadcrumbs('a'));
-        $this->assertEquals(array_slice($cycle, 2, 3), $this->service->getBreadcrumbs('d'));
+        $cycle = array(
+            'a' => new Breadcrumb('a', '/a'),
+            'd' => new Breadcrumb('d', '/d'),
+            'c' => new Breadcrumb('c', '/c'),
+            'r' => new Breadcrumb('r', '/r')
+        );
+        $this->assertEquals(
+            $this->array_get($cycle, array('c', 'd', 'a')),
+            $this->service->getBreadcrumbs('c')
+        );
+        $this->assertEquals(
+            $this->array_get($cycle, array('a', 'c', 'd')),
+            $this->service->getBreadcrumbs('a')
+        );
+        $this->assertEquals(
+            $this->array_get($cycle, array('d', 'a', 'c')),
+            $this->service->getBreadcrumbs('d')
+        );
+        $this->assertEquals(
+            $this->array_get($cycle, array('d', 'a', 'c', 'r')),
+            $this->service->getBreadcrumbs('r')
+        );
     }
 
     /**
@@ -195,4 +226,13 @@ class BreadcrumbsServiceTest extends ContainerTestCase
 
         return $this->service->setRouter($router);
     }
+
+    private function array_get(array $array, array $indices) {
+        $out = array();
+        foreach ($indices as $i) {
+            array_key_exists($i, $array) ? $out[$i] = $array[$i] : null;
+        }
+        return $out;
+    }
+
 }

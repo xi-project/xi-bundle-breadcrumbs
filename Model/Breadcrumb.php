@@ -15,12 +15,12 @@ class Breadcrumb
     /**
      * @var string Label of the breadcrumb
      */
-    private $label;
+    public $label;
 
     /**
      * @var string Url of the breadcrumb
      */
-    private $url;
+    public $url;
 
     /**
      * @param string $label Label of the breadcrumb
@@ -32,23 +32,9 @@ class Breadcrumb
         $this->url = $url;
     }
 
-    /**
-     * @return string Label of the breadcrumb
-     */
-    public function getLabel() {
-        return $this->label;
-    }
-
-    /**
-     * @return string Url of the breadcrumb
-     */
-    public function getUrl() {
-        return $this->url;
-    }
-
     public function __toString()
     {
-        $tpl = " Object\n(\n    label => %s\n    url => %s\n)";
-        return __CLASS__ . sprintf($tpl, $this->getLabel(), $this->getUrl());
+        $tpl = " Object(\n    label => %s\n    url => %s\n)";
+        return __CLASS__ . sprintf($tpl, $this->label, $this->url);
     }
 }

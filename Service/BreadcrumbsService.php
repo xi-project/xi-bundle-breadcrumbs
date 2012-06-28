@@ -8,6 +8,7 @@ use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use \Symfony\Component\Routing\Route;
 use \Symfony\Component\Routing\RouteCollection;
 use \Symfony\Component\Routing\RouterInterface;
+use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 
 /**
  * A service class to build breadcrumbs from Symfony routes.
@@ -48,25 +49,27 @@ class BreadcrumbsService
     }
 
     /**
-     * @param string $route
-     *
+     * @param string $name
      * @return array
      */
     public function getBreadcrumbs($name, array $params = array())
     {
         $route = $this->getRoute($name);
         $parents = $this->getParents($name);
+        $breadcrumbs = array();
 
         if ($route && $parents) {
             foreach (
-                array_merge($parents, array($name)) as $n
+                array_merge($parents, array($name)) as $current
             ) {
-                $breadcrumbs[] = $this->getLabel($n, $params);
+                $breadcrumbs[$current] = new Breadcrumb(
+                    $this->getLabel($current, $params),
+                    $this->getUrl($current, $params)
+                );
             }
-            return $breadcrumbs;
-        } else {
-            return array(); // fail quickly if not found
         }
+
+        return $breadcrumbs;
     }
 
     /**
@@ -146,6 +149,7 @@ class BreadcrumbsService
 
     /**
      * Returns only parameters applicable for the named route/label
+     *
      * @param string name
      * @return array
      */
