@@ -6,7 +6,7 @@ use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\Routing\Loader\YamlFileLoader;
 use \Symfony\Component\Routing\Router;
 use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
-use \Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService;
+use \Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService;
 use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
 
 /**
@@ -14,17 +14,17 @@ use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
  *
  * @author Peter Hillerström <peter.hillerstrom@soprano.fi>
  */
-class BreadcrumbsServiceTest extends ContainerTestCase
+class BreadcrumbServiceTest extends ContainerTestCase
 {
     /**
-     * @var BreadcrumbsService
+     * @var BreadcrumbService
      */
     protected $service;
 
     public function setUp()
     {
         parent::setUp();
-        $this->service = new BreadcrumbsService($this->getContainer());
+        $this->service = new BreadcrumbService($this->getContainer());
     }
 
     /**
@@ -33,8 +33,8 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      */
     public function testConstructor() {
         $this->assertInstanceOf(
-            'Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService',
-            new BreadcrumbsService($this->getContainer())
+            'Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService',
+            new BreadcrumbService($this->getContainer())
         );
     }
 
@@ -44,7 +44,7 @@ class BreadcrumbsServiceTest extends ContainerTestCase
      */
     public function testGetServiceFromContainer() {
         $this->assertInstanceOf(
-            'Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService',
+            'Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService',
             $this->getContainer()->get('xi_breadcrumbs')
         );
     }
@@ -214,7 +214,7 @@ class BreadcrumbsServiceTest extends ContainerTestCase
     }
 
     /**
-     * Sets the router used in the BreadcrumbsService with a YAML config
+     * Sets the router used in the BreadcrumbService with a YAML config
      *
      * @param string @yamlFile YAML routing configuration file name
      * @return Router

@@ -1,6 +1,6 @@
 parameters:
-    xi_breadcrumbs.class: Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbsService
-    xi_breadcrumbs_listener.class: Xi\Bundle\BreadcrumbsBundle\EventListener\BreadcrumbsListener
+    xi_breadcrumbs.class: Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService
+    xi_breadcrumbs_listener.class: Xi\Bundle\BreadcrumbsBundle\EventListener\BreadcrumbListener
 
 services:
     xi_breadcrumbs:

@@ -18,7 +18,7 @@ use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class BreadcrumbsService
+class BreadcrumbService
 {
     const TWIG_TAG = "# ?\{([^/}]+)\} ?#";
 
