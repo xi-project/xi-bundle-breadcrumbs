@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
  *
  * @author Peter Hillerström <peter.hillerstrom@soprano.fi>
  */
-class BreadcrumbsListener extends Controller
+class BreadcrumbListener extends Controller
 {
 
     /**
@@ -19,16 +19,25 @@ class BreadcrumbsListener extends Controller
      */
     protected $container;
 
-    public function __construct(/* ContainerInterface */ $container)
+    public function __construct($container)
     {
         $this->container = $container;
+        $this->service = $this->container->get('xi_breadcrumbs');
+        $this->router = $this->container->get('router');
     }
 
-    public function onKernelController(/* FilterControllerEvent */ $event)
+    public function onKernelController(FilterControllerEvent $event)
     {
-        $logger = $this->container->get('logger');
-        $logger->debug('Got kernel.controller event');
+        if (!is_array($controller = $event->getController())) {
+            return;
+        }
 
-        /* $router = $this->container->get('router'); */
+        $controller = $event->getController();
+        $request = $event->getRequest();
+
+        $route = $request->get('_route');
+        $params = $this->router->match($request->getRequestUri());
+
+        $this->service->addBreadcrumbs($route, $params);
     }
 }

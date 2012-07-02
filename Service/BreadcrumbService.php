@@ -32,6 +32,12 @@ class BreadcrumbService
      */
     protected $router;
 
+    /**
+     * Used as a dict to save/cache Breadcrumbs for route and parameter combinations
+     * @var array
+     */
+    private $cache = array();
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -52,8 +58,13 @@ class BreadcrumbService
      * @param string $name
      * @return array
      */
-    public function getBreadcrumbs($name, array $params = array())
+    public function getBreadcrumbs($name, array $params = array(), $caching = false)
     {
+        $hash = $this->getHash($name, $this->matchParams($name, $params));
+        if (!$caching && array_key_exists($hash, $this->cache)) {
+            return $this->cache[$hash];
+        }
+
         $route = $this->getRoute($name);
         $parents = $this->getParents($name);
         $breadcrumbs = array();
@@ -69,7 +80,16 @@ class BreadcrumbService
             }
         }
 
+        $this->cache[$hash] = $breadcrumbs;
         return $breadcrumbs;
+    }
+
+    public function addBreadcrumbs($route, array $params = array())
+    {
+        $matched = $this->matchParams($route, $params);
+        if ($bc = $this->getBreadcrumbs($route, $matched, true)) {
+            $this->cache[$this->getHash($route, $matched)] = $bc;
+        }
     }
 
     /**
@@ -97,7 +117,8 @@ class BreadcrumbService
     private function getParent($name) {
         $route = $this->getRoute($name);
         if ($route && $route->hasDefault('parent')) {
-            return $route->getDefault('parent');
+            $parent = $route->getDefault('parent');
+            return ($this->getRoute($parent) ? $parent : null);
         } else {
             return null;
         }
@@ -162,7 +183,14 @@ class BreadcrumbService
                 return array();
             }
 
-            $reqs = $route->getRequirements();
+            // Ensure we have requirements
+            if (!$reqs = $route->getRequirements()) {
+                $template = $fromLabel
+                    ? $route->getDefault('label')
+                    : $route->getPattern();
+                preg_match_all(self::TWIG_TAG, $template, $matches);
+                $reqs = array_flip($matches[1]);
+            }
 
             // Get default values for missing parameters
             foreach ($route->getDefaults() as $def => $value) {
@@ -171,18 +199,14 @@ class BreadcrumbService
                 }
             }
 
+            // Return matched params
             if (!empty($params) && $reqs) {
                 return array_intersect_key($params, $reqs);
-            } else {
-                $template = $fromLabel
-                    ? $route->getDefault('label')
-                    : $route->getPattern();
-                return preg_split(self::TWIG_TAG, $template);
             }
 
-        } else {
-            return array();
         }
+
+        return array();
     }
 
     /**
@@ -195,5 +219,9 @@ class BreadcrumbService
             throw new InvalidArgumentException(__FUNCTION__ . '() only accepts route name as a string.');
         }
         return $this->getRouter()->getRouteCollection()->get($name);
+    }
+
+    private function getHash($route, $params) {
+        return hash('sha1', json_encode(array_merge($params, array('route' => $route))));
     }
 }

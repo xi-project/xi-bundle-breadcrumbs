@@ -117,6 +117,52 @@ class BreadcrumbServiceTest extends ContainerTestCase
      * @depends testRouter
      * @group service
      */
+    public function testGetBreadcrumbsForRoutesWithPrefix()
+    {
+        $this->useRouter('prefix.yml');
+
+        $slug = 'b-78';
+        $breadcrumbs = array(
+            'home' => new Breadcrumb('home', '/home'),
+            'root' => new Breadcrumb('root', '/prefix/'),
+            'foo' => new Breadcrumb('foo', '/prefix/foo'),
+            'bar' => new Breadcrumb("bar ${slug}", "/prefix/foo/bar/${slug}")
+        );
+
+        $this->assertEquals(
+            $breadcrumbs,
+            $this->service->getBreadcrumbs('bar', array('slug' => $slug))
+        );
+    }
+
+    /**
+     * @test
+     * @depends testRouter
+     * @group service
+     */
+    public function testGetBreadcrumbsForRouteWithoutRequirements()
+    {
+        $this->useRouter('no_requirements.yml');
+
+        $name = 'Peter';
+        $thing = 'code';
+
+        $bc = array(
+            'hello' => new Breadcrumb("hello ${name}", "/hello/${name}"),
+            'doing' => new Breadcrumb("doing ${thing}", "/hello/Peter/do/${thing}")
+        );
+
+        $this->assertEquals($bc, $this->service->getBreadcrumbs('doing', array(
+            'name' => $name,
+            'thing' => $thing
+        )));
+    }
+
+    /**
+     * @test
+     * @depends testRouter
+     * @group service
+     */
     public function testGetBreadcrumbsCircular()
     {
         $this->useRouter('circular.yml');

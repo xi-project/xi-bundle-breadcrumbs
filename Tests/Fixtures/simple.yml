@@ -1,6 +1,7 @@
 root:
     pattern:   /
-    defaults:  { _controller: XiBreadcrumbsBundle:Default:index }
+    defaults:
+        parent: "home" # See prefix.yml
 
 foo:
     pattern:   /foo

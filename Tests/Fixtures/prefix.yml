@@ -1,0 +1,6 @@
+home:
+    pattern: /home
+
+prefix:
+    resource: "simple.yml"
+    prefix:   /prefix
