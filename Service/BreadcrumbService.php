@@ -3,8 +3,10 @@
 namespace Xi\Bundle\BreadcrumbsBundle\Service;
 
 use \InvalidArgumentException;
+use \Symfony\Component\Locale\Locale;
 use \Symfony\Component\DependencyInjection\ContainerInterface;
 use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use \Symfony\Component\Routing\Exception\RouteNotFoundException;
 use \Symfony\Component\Routing\Route;
 use \Symfony\Component\Routing\RouteCollection;
 use \Symfony\Component\Routing\RouterInterface;
@@ -49,7 +51,7 @@ class BreadcrumbService
         return $this->router;
     }
 
-    public function setRouter(RouterInterface $router)
+    public function setRouter($router)
     {
         return $this->router = $router;
     }
@@ -63,6 +65,10 @@ class BreadcrumbService
         $hash = $this->getHash($name, $this->matchParams($name, $params));
         if (!$caching && array_key_exists($hash, $this->cache)) {
             return $this->cache[$hash];
+        }
+
+        if (array_key_exists('_locale', $params)) {
+            $name = $name .'.'. $params['_locale'];
         }
 
         $route = $this->getRoute($name);
@@ -118,6 +124,9 @@ class BreadcrumbService
         $route = $this->getRoute($name);
         if ($route && $route->hasDefault('parent')) {
             $parent = $route->getDefault('parent');
+            if ($route->hasDefault('_locale')) {
+                $parent .= '.' . $route->getDefault('_locale');
+            }
             return ($this->getRoute($parent) ? $parent : null);
         } else {
             return null;
@@ -192,6 +201,10 @@ class BreadcrumbService
                 $reqs = array_flip($matches[1]);
             }
 
+            if ($route->hasDefault('_locale')) {
+                $reqs['_locale'] = true;
+            }
+
             // Get default values for missing parameters
             foreach ($route->getDefaults() as $def => $value) {
                 if (!array_key_exists($def, $params) && array_key_exists($def, $reqs)) {
@@ -213,12 +226,25 @@ class BreadcrumbService
      * @param string name
      * @return Route|null
      */
-    private function getRoute($name)
+    private function getRoute($name, $locale = null)
     {
         if (!is_string($name)) {
             throw new InvalidArgumentException(__FUNCTION__ . '() only accepts route name as a string.');
         }
-        return $this->getRouter()->getRouteCollection()->get($name);
+        $router = $this->getRouter();
+        try {
+            $route = $router->getRouteCollection()->get($this->localizeName($name));
+            if ($route && $route->hasDefault('_locale')) {
+                return $route;
+            }
+        } catch (RouteNotFoundException $e) {
+            // pass
+        }
+        return $router->getRouteCollection()->get($name);
+    }
+
+    private function localizeName($name, $locale = null) {
+        return ($locale or $locale = Locale::getDefault()) ? $name .'.'. $locale : $name;
     }
 
     private function getHash($route, $params) {

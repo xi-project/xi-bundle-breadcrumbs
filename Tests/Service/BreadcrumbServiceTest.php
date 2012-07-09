@@ -4,7 +4,10 @@ namespace Xi\Bundle\BreadcrumbsBundle\Tests\Service;
 
 use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\Routing\Loader\YamlFileLoader;
+use \Symfony\Component\Routing\Route;
+use \Symfony\Component\Routing\RouteCollection;
 use \Symfony\Component\Routing\Router;
+use \Symfony\Component\Routing\RouterInterface;
 use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 use \Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService;
 use \Xi\Bundle\BreadcrumbsBundle\Tests\ContainerTestCase;
@@ -52,14 +55,15 @@ class BreadcrumbServiceTest extends ContainerTestCase
     /**
      * @test
      * @group service
+     * @group intlrouting
      */
     public function testRouter()
     {
         $router = $this->service->getRouter();
-        $this->assertInstanceOf('Symfony\Component\Routing\Router', $router);
+        $this->assertArrayHasKey('Symfony\Component\Routing\RouterInterface', class_implements($router));
 
         $router = $this->useRouter('simple.yml');
-        $this->assertInstanceOf('\Symfony\Component\Routing\Router', $router);
+        $this->assertArrayHasKey('Symfony\Component\Routing\RouterInterface', class_implements($router));
     }
 
     /**
@@ -198,6 +202,99 @@ class BreadcrumbServiceTest extends ContainerTestCase
             $this->array_get($cycle, array('d', 'a', 'c', 'r')),
             $this->service->getBreadcrumbs('r')
         );
+    }
+
+    /**
+     * @test
+     * @depends testRouter
+     * @group service
+     * @group intlrouting
+     */
+    public function testGetBreadcrumbsBeSimpleIntl()
+    {
+        if (!($this->getContainer()->get('router') instanceof \BeSimple\I18nRoutingBundle\Routing\Router)) {
+            $this->markTestSkipped('BeSimpleI18nRoutingBundle not loaded.');
+        }
+
+        $router = $this->getMock('BesimpleI18nRouter', array('generate', 'getRouteCollection'));
+        $router->expects($this->any())
+            ->method('getRouteCollection')
+            ->will($this->returnValue($this->getBeSimpleRouteFixture()));
+
+        $map = array(
+            array('home.en', array(), '/home'),
+            array('home.fi', array(), '/koti'),
+            array('one.en', array(), '/one'),
+            array('one.fi', array(), '/yksi'),
+            array('two.en', array('_locale' => 'en', 'slug' => 3), '/one/two/3'),
+            array('two.fi', array('_locale' => 'fi', 'slug' => 3), '/yksi/kaksi/3')
+        );
+        $router->expects($this->any())->method('generate')->will($this->returnValueMap($map));
+
+        $this->service->setRouter($router);
+
+        $slug = 3;
+
+        $en = array(
+            'home.en' => new Breadcrumb("home", "/home"),
+            'one.en' => new Breadcrumb("one", "/one"),
+            'two.en' => new Breadcrumb("two", "/one/two/${slug}"),
+        );
+
+        $fi = array(
+            'home.fi' => new Breadcrumb("koti", "/koti"),
+            'one.fi' => new Breadcrumb("yksi", "/yksi"),
+            'two.fi' => new Breadcrumb("kaksi", "/yksi/kaksi/${slug}"),
+        );
+
+        $this->assertEquals($en, $this->service->getBreadcrumbs('two', array(
+            '_locale' => 'en',
+            'slug' => $slug
+        )));
+
+        $this->assertEquals($fi, $this->service->getBreadcrumbs('two', array(
+            '_locale' => 'fi',
+            'slug' => $slug
+        )));
+    }
+
+    private function getBeSimpleRouteFixture() {
+        $rc = new RouteCollection();
+
+        // EN routes
+        $rc->add('home.en', new Route('/home', array(
+            '_locale' => 'en',
+            'label' => 'home'
+        )));
+        $rc->add('one.en', new Route('/one', array(
+            '_locale' => 'en',
+            'label' => 'one',
+            'parent' => 'home',
+        )));
+        $rc->add('two.en', new Route('/one/two/{slug}', array(
+            '_locale' => 'en',
+            'label' => 'two',
+            'parent' => 'one',
+            'requirements' => array('slug' => "\d+")
+        )));
+
+        // FI routes
+        $rc->add('home.fi', new Route('/koti', array(
+            '_locale' => 'fi',
+            'label' => 'home' // @todo Fix labels to be translated with TranslationTranslator
+        )));
+        $rc->add('one.fi', new Route('/yksi', array(
+            '_locale' => 'fi',
+            'label' => 'one',
+            'parent' => 'home'
+        )));
+        $rc->add('two.fi', new Route('/yksi/kaksi/{slug}', array(
+            '_locale' => 'fi',
+            'label' => 'two {slug}',
+            'parent' => 'one',
+            'requirements' => array('slug' => "\d+")
+        )));
+        return $rc;
     }
 
     /**
