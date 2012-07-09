@@ -2,9 +2,9 @@
   <ul id="xi-breadcrumbs">
     {% for bc in breadcrumbs %}
       {% if loop.last or not bc.url %}
-        <li>{{ bc.label }}</li>
+        <li>{{ bc.label|trans }}</li>
       {% else %}
-        <li><a href="{{ bc.url }}">{{ bc.label }}</a></li>
+        <li><a href="{{ bc.url }}">{{ bc.label|trans }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>

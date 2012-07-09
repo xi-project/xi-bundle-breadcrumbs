@@ -233,19 +233,23 @@ class BreadcrumbServiceTest extends ContainerTestCase
 
         $this->service->setRouter($router);
 
+        // Expected values
+
         $slug = 3;
 
         $en = array(
-            'home.en' => new Breadcrumb("home", "/home"),
-            'one.en' => new Breadcrumb("one", "/one"),
-            'two.en' => new Breadcrumb("two", "/one/two/${slug}"),
+            'home.en' => new Breadcrumb('home', '/home'),
+            'one.en' => new Breadcrumb('one', '/one'),
+            'two.en' => new Breadcrumb("two ${slug}", "/one/two/${slug}"),
         );
 
         $fi = array(
-            'home.fi' => new Breadcrumb("koti", "/koti"),
-            'one.fi' => new Breadcrumb("yksi", "/yksi"),
-            'two.fi' => new Breadcrumb("kaksi", "/yksi/kaksi/${slug}"),
+            'home.fi' => new Breadcrumb('home', '/koti'),
+            'one.fi' => new Breadcrumb('one', '/yksi'),
+            'two.fi' => new Breadcrumb("two ${slug}", "/yksi/kaksi/${slug}"),
         );
+
+        // Asserts
 
         $this->assertEquals($en, $this->service->getBreadcrumbs('two', array(
             '_locale' => 'en',
@@ -273,7 +277,7 @@ class BreadcrumbServiceTest extends ContainerTestCase
         )));
         $rc->add('two.en', new Route('/one/two/{slug}', array(
             '_locale' => 'en',
-            'label' => 'two',
+            'label' => 'two {slug}',
             'parent' => 'one',
             'requirements' => array('slug' => "\d+")
         )));
@@ -281,7 +285,7 @@ class BreadcrumbServiceTest extends ContainerTestCase
         // FI routes
         $rc->add('home.fi', new Route('/koti', array(
             '_locale' => 'fi',
-            'label' => 'home' // @todo Fix labels to be translated with TranslationTranslator
+            'label' => 'home'
         )));
         $rc->add('one.fi', new Route('/yksi', array(
             '_locale' => 'fi',

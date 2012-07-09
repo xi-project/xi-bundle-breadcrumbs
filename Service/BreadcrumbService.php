@@ -3,6 +3,7 @@
 namespace Xi\Bundle\BreadcrumbsBundle\Service;
 
 use \InvalidArgumentException;
+use \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use \Symfony\Component\Locale\Locale;
 use \Symfony\Component\DependencyInjection\ContainerInterface;
 use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -141,10 +142,24 @@ class BreadcrumbService
     {
         if ($route = $this->getRoute($name)) {
             if ($route->hasDefault('label')) {
-                return $this->applyParams(
-                    $route->getDefault('label'),
-                    $this->matchParams($name, $params, true)
-                );
+                $label = $route->getDefault('label');
+
+                if ($route->hasDefault('_locale')) {
+                    $locale = $route->getDefault('_locale');
+
+                    if (is_array($label)) {
+                        $label = $label[$locale];
+                    }
+
+                    try {
+                        $translator = $this->container->get('translator');
+                        $label = $translator->trans($label, array(), 'xi_breadcrumbs', 'fi');
+                    } catch (ServiceNotFoundException $e) {
+                        // pass
+                    }
+                }
+
+                return $this->applyParams($label,  $this->matchParams($name, $params, true));
             } else {
                 return $name;
             }
@@ -226,7 +241,7 @@ class BreadcrumbService
      * @param string name
      * @return Route|null
      */
-    private function getRoute($name, $locale = null)
+    private function getRoute($name)
     {
         if (!is_string($name)) {
             throw new InvalidArgumentException(__FUNCTION__ . '() only accepts route name as a string.');
