@@ -3,10 +3,10 @@
 namespace Xi\Bundle\BreadcrumbsBundle\Service;
 
 use \InvalidArgumentException;
-use \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use \Symfony\Component\Locale\Locale;
 use \Symfony\Component\DependencyInjection\ContainerInterface;
+use \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use \Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use \Symfony\Component\Locale\Locale;
 use \Symfony\Component\Routing\Exception\RouteNotFoundException;
 use \Symfony\Component\Routing\Route;
 use \Symfony\Component\Routing\RouteCollection;
