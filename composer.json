@@ -3,7 +3,7 @@
     "description": "Xi breadcrumbs bundle for Symfony2 that utilises routes as a tree to build the breadcrumbs in order to not pollute the controller actions with repetitive breadcrumbs code.",
     "keywords": ["breadcrumbs", "routing"],
     "type": "symfony-bundle",
-    "license": "BSD"
+    "license": "BSD",
     "authors": [
         {
             "name": "xi-project",
@@ -12,12 +12,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "symfony/config": "2.0.*",
-        "symfony/dependency-injection": "2.0.*",
-        "symfony/framework-bundle": "2.0.*",
-        "symfony/httpkernel": "2.0.*",
-        "symfony/locale": "2.0.*",
-        "symfony/routing": "2.0.*",
+        "symfony/framework-bundle": "=v2.0.15",
+        "symfony/locale": "=v2.0.15",
         "twig/twig": "1.8.3"
     },
     "autoload": {

@@ -16,6 +16,7 @@
     <testsuites>
         <testsuite name="Xi Breadcrumbs Bundle Test Suite">
             <directory>.</directory>
+            <exclude>./vendor</exclude>
         </testsuite>
     </testsuites>
 
