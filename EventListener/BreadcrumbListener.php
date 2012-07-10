@@ -26,7 +26,7 @@ class BreadcrumbListener extends Controller
         $this->router = $this->container->get('router');
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(/* FilterControllerEvent */ $event)
     {
         if (!is_array($controller = $event->getController())) {
             return;

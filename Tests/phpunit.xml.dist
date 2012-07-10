@@ -10,13 +10,18 @@
     convertWarningsToExceptions = "true"
     processIsolation            = "false"
     stopOnFailure               = "false"
-    syntaxCheck                 = "false"
-    bootstrap                   = "bootstrap.php" >
+    syntaxCheck                 = "true"
+    bootstrap                   = "bootstrap.php"
+    >
+
+    <php>
+      <server name="KERNEL_DIR" value="../../../../../app" />
+    </php>
 
     <testsuites>
         <testsuite name="Xi Breadcrumbs Bundle Test Suite">
             <directory>.</directory>
-            <exclude>./vendor</exclude>
+            <exclude>../vendor</exclude>
         </testsuite>
     </testsuites>
 

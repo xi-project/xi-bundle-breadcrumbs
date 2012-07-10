@@ -1,7 +1,7 @@
 {
     "name": "xi/breadcrumbs-bundle",
     "description": "Xi breadcrumbs bundle for Symfony2 that utilises routes as a tree to build the breadcrumbs in order to not pollute the controller actions with repetitive breadcrumbs code.",
-    "keywords": ["breadcrumbs", "routing"],
+    "keywords": ["Xi", "breadcrumbs", "routing", "internationalisation"],
     "type": "symfony-bundle",
     "license": "BSD",
     "authors": [
@@ -10,10 +10,23 @@
             "email": "xi.devs@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git://github.com/BeSimple/BeSimpleI18nRoutingBundle.git"
+        }
+    ],
     "require": {
-        "php": ">=5.3.0",
-        "symfony/framework-bundle": "=v2.0.15",
-        "symfony/locale": "=v2.0.15",
+        "besimple/i18n-routing-bundle": "=2.0.x-dev",
+        "php": ">=5.3.2",
+        "symfony/class-loader": ">=v2.0.14",
+        "symfony/browser-kit": ">=v2.0.14",
+        "symfony/finder": ">=v2.0.14",
+        "symfony/framework-bundle": ">=v2.0.14",
+        "symfony/locale": ">=v2.0.14",
+        "symfony/translation": ">=v2.0.14",
+        "symfony/twig-bundle": ">=v2.0.14",
+        "symfony/yaml": ">=v2.0.14",
         "twig/twig": "1.8.3"
     },
     "autoload": {
