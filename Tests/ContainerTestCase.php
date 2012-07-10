@@ -15,6 +15,7 @@ require_once($_SERVER['KERNEL_DIR'] . "/AppKernel.php");
  * dependencies.
  *
  * @author Mikko Hirvonen <mikko.hirvonen@soprano.fi>
+ * @author Peter Hillerström <peter.hillerstrom@soprano.fi>
  */
 class ContainerTestCase extends PHPUnit_Framework_Testcase
 {
@@ -23,14 +24,19 @@ class ContainerTestCase extends PHPUnit_Framework_Testcase
      */
     private $container;
 
+    /**
+     * @var Kernel
+     */
+    private $kernel;
+
     public function setUp()
     {
         parent::setUp();
 
-        $kernel = new AppKernel('test', true);
-        $kernel->boot();
+        $this->kernel = new AppKernel('test', true);
+        $this->kernel->boot();
 
-        $this->container = $kernel->getContainer();
+        $this->container = $this->kernel->getContainer();
     }
 
     /**
@@ -39,5 +45,13 @@ class ContainerTestCase extends PHPUnit_Framework_Testcase
     public function getContainer()
     {
         return $this->container;
+    }
+
+    /**
+     * @return Kernel
+     */
+    public function getKernel()
+    {
+        return $this->kernel;
     }
 }

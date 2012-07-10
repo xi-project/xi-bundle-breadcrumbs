@@ -1,0 +1,38 @@
+imports:
+    - { resource: parameters.ini }
+    - { resource: security.yml }
+    - { resource: @XiBreadcrumbsBundle/Resources/config/services.yml }
+
+framework:
+    translator:      { fallback: %locale% }
+    secret:          %secret%
+    charset:         UTF-8
+    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+    form:            true
+    csrf_protection: true
+    validation:      { enable_annotations: false }
+    templating:      { engines: ['twig'] }
+    session:
+        default_locale: %locale%
+        auto_start:     true
+
+# Twig Configuration
+twig:
+    debug:            %kernel.debug%
+    strict_variables: %kernel.debug%
+
+# Assetic Configuration
+# assetic:
+#     debug:          %kernel.debug%
+#     use_controller: false
+#     # java: /usr/bin/java
+#     filters:
+#         cssrewrite: ~
+#         # closure:
+#         #     jar: %kernel.root_dir%/java/compiler.jar
+#         # yui_css:
+#         #     jar: %kernel.root_dir%/java/yuicompressor-2.4.2.jar
+
+be_simple_i18n_routing:
+    attribute_translator:
+        type: translator

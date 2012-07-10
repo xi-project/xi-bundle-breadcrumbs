@@ -1,0 +1,25 @@
+imports:
+    - { resource: parameters.ini }
+    - { resource: @XiBreadcrumbsBundle/Resources/config/services.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.filesystem
+    router:     { resource: "%kernel.root_dir%/config/routing_dev.yml" }
+    secret:     %secret%
+    templating: { engines: ['twig'] }
+
+# monolog:
+#     handlers:
+#         main:
+#             type:  stream
+#             path:  %kernel.logs_dir%/%kernel.environment%.log
+#             level: debug
+#         firephp:
+#             type:  firephp
+#             level: info
+
+be_simple_i18n_routing:
+    attribute_translator:
+        type: translator
