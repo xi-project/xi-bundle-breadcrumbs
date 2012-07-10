@@ -8,7 +8,7 @@ before_script:
   - wget http://getcomposer.org/composer.phar
   - php composer.phar install
 
-script: phpunit -v -c Tests/phpunit.xml Tests
+script: phpunit -v -c Tests/phpunit.xml.dist Tests
 
 notifications:
   irc: "irc.freenode.net#xi-project"
