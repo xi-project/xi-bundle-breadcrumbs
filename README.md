@@ -7,6 +7,8 @@ This is different from other breadcrumb bundles, because it utilizes routes
 as a tree to build the breadcrumbs in order to not pollute the controller  
 actions with repetitive breadcrumbs code.
 
+[![Build Status](https://secure.travis-ci.org/xi-project/xi-bundle-breadcrumbs.png?branch=service)](http://travis-ci.org/xi-project/xi-bundle-breadcrumbs)
+
 
 ## Design goals
 
