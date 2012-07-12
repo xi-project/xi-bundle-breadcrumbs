@@ -60,7 +60,10 @@ class BreadcrumbListenerTest extends WebTestCase
         ));
         $controller = $this->resolver->getController($request);
 
-        $event = $this->getMock('FilterControllerEvent', array('getController', 'getRequest'));
+        $event = $this->getMockBuilder('\Symfony\Component\HttpKernel\Event\FilterControllerEvent')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getController', 'getRequest'))
+            ->getMock();
         $event->expects($this->any())->method('getController')->will($this->returnValue($controller));
         $event->expects($this->any())->method('getRequest')->will($this->returnValue($request));
 
