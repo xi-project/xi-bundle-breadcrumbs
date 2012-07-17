@@ -26,6 +26,7 @@
         "besimple/i18n-routing-bundle": "=2.0.x-dev",
         "symfony/browser-kit": ">=v2.0.14",
         "symfony/class-loader": ">=v2.0.14",
+        "symfony/css-selector": ">=v2.0.14",
         "symfony/finder": ">=v2.0.14"
     },
     "suggest": {
