@@ -1,7 +1,24 @@
 parameters:
-#    xi_breadcrumbs.example.class: Xi\Bundle\BreadcrumbsBundle\Example
+    xi_breadcrumbs.class: Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService
+    xi_breadcrumbs_listener.class: Xi\Bundle\BreadcrumbsBundle\EventListener\BreadcrumbListener
+    xi_breadcrumbs_twig.class: Xi\Bundle\BreadcrumbsBundle\Twig\Extension\BreadcrumbExtension
 
 services:
-#    xi_breadcrumbs.example:
-#        class: %xi_breadcrumbs.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    xi_breadcrumbs:
+        class: %xi_breadcrumbs.class%
+        arguments:
+            - "@service_container"
+
+    xi_breadcrumbs_listener:
+        class: %xi_breadcrumbs_listener.class%
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: kernel.listener, event: onKernelController, method: onKernelController }
+
+    xi_breadcrumbs_twig:
+        class: %xi_breadcrumbs_twig.class%
+        arguments:
+            - "@service_container"
+        tags:
+            -  { name: twig.extension }

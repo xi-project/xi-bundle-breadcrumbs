@@ -1,0 +1,3 @@
+XiBreadcrumbsBundle:
+    resource: "@XiBreadcrumbsBundle/Resources/config/routing.yml"
+    prefix:   /

@@ -1,0 +1,27 @@
+root:
+    pattern:   /
+    defaults:
+        parent: "home" # See prefix.yml
+
+foo:
+    pattern:   /foo
+    defaults:
+        label: "foo",
+        parent: "root"
+
+bar:
+    pattern:   /foo/bar/{slug}
+    defaults:
+        label: "bar {slug}",
+        parent: "foo"
+    requirements:
+        slug: "[a-d]1?-\d+"
+
+quuz:
+    pattern:   /foo/bar/{slug}/{lus}
+    defaults:
+        label: "quuz {lus}",
+        parent: "bar"
+    requirements:
+        slug: "[a-d]1?-\d+",
+        lus: "\w+"
