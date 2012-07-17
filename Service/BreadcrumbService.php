@@ -41,25 +41,42 @@ class BreadcrumbService
      */
     private $cache = array();
 
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->router = $container->get('router');
     }
 
+    /**
+     * @return RouterInterface
+     */
     public function getRouter()
     {
         return $this->router;
     }
 
+    /**
+     * Set the router this service uses.
+     * This method implements a fluent interface.
+     *
+     * @param RouterInterface $router
+     * @return RouterInterface
+     */
     public function setRouter($router)
     {
         return $this->router = $router;
     }
 
     /**
+     * Get an array of Breadcrumbs by route name and parameters
+     *
      * @param string $name
-     * @return array
+     * @param array $params
+     * @param boolean $caching True when adding breadcrumbs to cache (prevent getting from the cache), false otherwise (default)
+     * @return array Array of Breadcrumbs
      */
     public function getBreadcrumbs($name, array $params = array(), $caching = false)
     {
@@ -68,6 +85,21 @@ class BreadcrumbService
             return $this->cache[$hash];
         }
 
+        $breadcrumbs = $this->createBreadcrumbs($name, $params);
+
+        $this->cache[$hash] = $breadcrumbs;
+        return $breadcrumbs;
+    }
+
+    /**
+     * Create an array of Breadcrumbs by route name and parameters
+     *
+     * @param string $name
+     * @param array $params
+     * @return array Array of Breadcrumbs
+     */
+    public function createBreadcrumbs($name, array $params = array())
+    {
         if (array_key_exists('_locale', $params)) {
             $name = $name .'.'. $params['_locale'];
         }
@@ -87,10 +119,15 @@ class BreadcrumbService
             }
         }
 
-        $this->cache[$hash] = $breadcrumbs;
         return $breadcrumbs;
     }
 
+    /**
+     * Adds (and caches) breadcrumbs for route name and parameters.
+     *
+     * @param string $route
+     * @param array $params
+     */
     public function addBreadcrumbs($route, array $params = array())
     {
         $matched = $this->matchParams($route, $params);
@@ -121,7 +158,8 @@ class BreadcrumbService
      * @param string $name
      * @return Route|null
      */
-    private function getParent($name) {
+    private function getParent($name)
+    {
         $route = $this->getRoute($name);
         if ($route && $route->hasDefault('parent')) {
             $parent = $route->getDefault('parent');
@@ -172,7 +210,8 @@ class BreadcrumbService
      * @param string name
      * @return string
      */
-    public function getUrl($name, array $params = array()) {
+    public function getUrl($name, array $params = array())
+    {
         return $this->router->generate($name, $this->matchParams($name, $params));
     }
 
@@ -258,11 +297,13 @@ class BreadcrumbService
         return $router->getRouteCollection()->get($name);
     }
 
-    private function localizeName($name, $locale = null) {
+    private function localizeName($name, $locale = null)
+    {
         return ($locale or $locale = Locale::getDefault()) ? $name .'.'. $locale : $name;
     }
 
-    private function getHash($route, $params) {
+    private function getHash($route, $params)
+    {
         return hash('sha1', json_encode(array_merge($params, array('route' => $route))));
     }
 }

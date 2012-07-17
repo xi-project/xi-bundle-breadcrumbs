@@ -5,7 +5,9 @@ namespace Xi\Bundle\BreadcrumbsBundle\Tests\EventListener;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Xi\Bundle\BreadcrumbsBundle\EventListener\BreadcrumbListener;
 use Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 use Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService;
@@ -15,13 +17,6 @@ use Xi\Bundle\BreadcrumbsBundle\Service\BreadcrumbService;
  */
 class BreadcrumbListenerTest extends WebTestCase
 {
-    /**
-     * @var BreadcrumbService
-     */
-    protected $service;
-
-    static protected $kernel;
-
     public function setUp()
     {
         parent::setUp();
@@ -32,11 +27,9 @@ class BreadcrumbListenerTest extends WebTestCase
         $this->listener = new BreadcrumbListener($this->container);
         $this->service = new BreadcrumbService($this->container);
 
-        static::$kernel = static::createKernel();
-
         $this->resolver = new ControllerResolver(
             $this->container,
-            new ControllerNameParser(static::$kernel)
+            new ControllerNameParser(static::createKernel())
         );
     }
 
@@ -44,8 +37,11 @@ class BreadcrumbListenerTest extends WebTestCase
     {
         parent::tearDown();
 
+        $this->client = null;
+        $this->container = null;
         $this->listener = null;
         $this->service = null;
+        $this->resolver = null;
     }
 
     /**
@@ -54,10 +50,9 @@ class BreadcrumbListenerTest extends WebTestCase
      */
     public function testOnKernelControllerEvent()
     {
-        $request = Request::create('/hello/Peter/do/play', 'GET', array(
-            'name' => 'Peter',
-            'thing' => 'play'
-        ));
+        $this->client->request('GET', '/hello/Peter/do/play');
+
+        $request = $this->client->getRequest();
         $controller = $this->resolver->getController($request);
 
         $event = $this->getMockBuilder('\Symfony\Component\HttpKernel\Event\FilterControllerEvent')

@@ -32,6 +32,9 @@ class Breadcrumb
         $this->url = $url;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $tpl = " Object(\n    label => %s\n    url => %s\n)";

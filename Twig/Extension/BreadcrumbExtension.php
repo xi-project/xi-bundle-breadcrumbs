@@ -20,6 +20,9 @@ class BreadcrumbExtension extends Twig_Extension
      */
     protected $service;
 
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct($container)
     {
         $this->container = $container;
@@ -58,6 +61,9 @@ class BreadcrumbExtension extends Twig_Extension
         );
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'breadcrumbs';

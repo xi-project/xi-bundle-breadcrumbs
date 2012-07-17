@@ -12,18 +12,20 @@ use \Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb;
 class BreadcrumbTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * @test
      * @group model
      */
-    public function testConstructor()
+    public function constructor()
     {
         $bc = new Breadcrumb('foo', '/bar');
         $this->assertInstanceOf('\Xi\Bundle\BreadcrumbsBundle\Model\Breadcrumb', $bc);
     }
 
     /**
+     * @test
      * @group model
      */
-    public function testGetters()
+    public function getters()
     {
         $bc = new Breadcrumb('foo', '/bar');
         $this->assertEquals('foo', $bc->label);
