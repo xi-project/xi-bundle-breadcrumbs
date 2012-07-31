@@ -108,7 +108,7 @@ class BreadcrumbService
         $parents = $this->getParents($name);
         $breadcrumbs = array();
 
-        if ($route && $parents) {
+        if ($route) {
             foreach (
                 array_merge($parents, array($name)) as $current
             ) {
