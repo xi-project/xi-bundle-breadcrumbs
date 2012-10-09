@@ -6,13 +6,13 @@ root:
 foo:
     pattern:   /foo
     defaults:
-        label: "foo",
+        label: "foo"
         parent: "root"
 
 bar:
     pattern:   /foo/bar/{slug}
     defaults:
-        label: "bar {slug}",
+        label: "bar {slug}"
         parent: "foo"
     requirements:
         slug: "[a-d]1?-\d+"
@@ -20,8 +20,8 @@ bar:
 quuz:
     pattern:   /foo/bar/{slug}/{lus}
     defaults:
-        label: "quuz {lus}",
+        label: "quuz {lus}"
         parent: "bar"
     requirements:
-        slug: "[a-d]1?-\d+",
+        slug: "[a-d]1?-\d+"
         lus: "\w+"

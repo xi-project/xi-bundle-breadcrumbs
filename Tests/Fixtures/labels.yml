@@ -1,19 +1,19 @@
 root:
     pattern: /
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         label: "home"
 
 lussu:
     pattern: /lussu
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         pattern: /lussu
 
 loso:
     pattern: /lussu/loso/{slug}
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         parent: "lussu"
         label: "loso {slug}"
     requirements:
@@ -22,7 +22,7 @@ loso:
 tussi:
     pattern: /lussu/tussi/{model}
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         parent: "lussu"
         label: "{model} tussi"
         model: "musta"

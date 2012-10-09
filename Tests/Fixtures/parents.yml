@@ -1,27 +1,27 @@
 root:
     pattern: /
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
 
 some:
     pattern: /some
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         parent: "root"
 
 path:
     pattern: /some/path
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         parent: "some"
 
 unrooted:
     pattern: /unrooted
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
 
 way:
     pattern: /unrooted/way
     defaults:
-        _controller: XiBreadcrumbsBundle:Default:index,
+        _controller: XiBreadcrumbsBundle:Default:index
         parent: "unrooted"
