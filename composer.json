@@ -3,7 +3,7 @@
     "description": "Xi breadcrumbs bundle for Symfony2 that utilises routes as a tree to build the breadcrumbs in order to not pollute the controller actions with repetitive breadcrumbs code.",
     "keywords": ["Xi", "breadcrumbs", "routing", "internationalisation"],
     "type": "symfony-bundle",
-    "license": "BSD",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "xi-project",
@@ -17,17 +17,18 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=v2.0.14",
-        "symfony/locale": ">=v2.0.14",
-        "symfony/twig-bundle": ">=v2.0.14",
-        "symfony/yaml": ">=v2.0.14"
+        "symfony/framework-bundle": "2.1.*",
+        "symfony/locale": "2.1.*",
+        "symfony/twig-bundle": "2.1.*",
+        "symfony/yaml": "2.1.*"
     },
     "require-dev": {
-        "besimple/i18n-routing-bundle": "=2.0.x-dev",
-        "symfony/browser-kit": ">=v2.0.14",
-        "symfony/class-loader": ">=v2.0.14",
-        "symfony/css-selector": ">=v2.0.14",
-        "symfony/finder": ">=v2.0.14"
+        "besimple/i18n-routing-bundle": "dev-master",
+        "symfony/browser-kit": "2.1.*",
+        "symfony/class-loader": "2.1.*",
+        "symfony/css-selector": "2.1.*",
+        "symfony/finder": "2.1.*",
+        "symfony/form": "2.1.*"
     },
     "suggest": {
         "besimple/i18n-routing-bundle": "Enables internationalised routes and breaadcrumbs."
