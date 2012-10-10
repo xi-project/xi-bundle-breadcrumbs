@@ -4,6 +4,7 @@ imports:
     - { resource: @XiBreadcrumbsBundle/Resources/config/services.yml }
 
 framework:
+    default_locale:  %locale%
     translator:      { fallback: %locale% }
     secret:          %secret%
     charset:         UTF-8
@@ -13,7 +14,6 @@ framework:
     validation:      { enable_annotations: false }
     templating:      { engines: ['twig'] }
     session:
-        default_locale: %locale%
         auto_start:     true
 
 # Twig Configuration
