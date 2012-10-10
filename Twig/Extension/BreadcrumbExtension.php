@@ -53,7 +53,7 @@ class BreadcrumbExtension extends Twig_Extension
         $request = $this->container->get('request');
 
         $route = $request->get('_route');
-        $params = $router->match($request->getRequestUri());
+        $params = $router->match($request->getPathInfo());
 
         return $this->container->get("templating")->render(
             "XiBreadcrumbsBundle:Default:breadcrumbs.html.twig",
