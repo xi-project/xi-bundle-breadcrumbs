@@ -55,7 +55,7 @@ class BreadcrumbExtension extends Twig_Extension
 
         $route = $request->get('_route');
         try {
-            $params = $router->match($request->getPathInfo());
+            $params = $router->match(rawurldecode($request->getPathInfo()));
         }
         catch (MethodNotAllowedException $e) {
             return;
