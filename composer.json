@@ -10,12 +10,6 @@
             "email": "xi.devs@gmail.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git://github.com/BeSimple/BeSimpleI18nRoutingBundle.git"
-        }
-    ],
     "require": {
         "symfony/framework-bundle": "2.1.*",
         "symfony/locale": "2.1.*",
@@ -23,7 +17,7 @@
         "symfony/yaml": "2.1.*"
     },
     "require-dev": {
-        "besimple/i18n-routing-bundle": "dev-master",
+        "besimple/i18n-routing-bundle": "2.1.*@dev",
         "symfony/browser-kit": "2.1.*",
         "symfony/class-loader": "2.1.*",
         "symfony/css-selector": "2.1.*",
@@ -31,7 +25,7 @@
         "symfony/form": "2.1.*"
     },
     "suggest": {
-        "besimple/i18n-routing-bundle": "Enables internationalised routes and breaadcrumbs."
+        "besimple/i18n-routing-bundle": "Enables internationalised routes and breadcrumbs."
     },
     "autoload": {
         "psr-0": {

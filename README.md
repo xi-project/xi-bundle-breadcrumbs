@@ -20,32 +20,27 @@ actions with repetitive breadcrumbs code.
 
 ## Installing
 
-### 'deps' file
+### Add bundle to `composer.json`
 
-```yaml
-[XiBreadcrumbsBundle]
-    git=http://github.com/xi-project/xi-bundle-breadcrumbs.git
-    target=/bundles/Xi/Bundle/BreadcrumbsBundle
-    version=origin/master
-```
+    "require": {
+        # ..
+        "xi/breadcrumbs-bundle": ">=2.1"
+        # ..
+    }
 
-Version declaration is optional, but recommended for Symfony 2.0.x as the master branch  
-will be for Symfony 2.1, which uses composer instead of deps.
-
-### autoload.php file
+### Add bundle to `AppKernel.php`
 
 ```php
-<?php
-    'Xi\Bundle'        => __DIR__.'/../vendor/bundles',
-?>
-```
+public function registerBundles()
+{
+    $bundles = array(
+        ...
 
-### appKernel.php -file
+        new Xi\Bundle\BreadcrumbsBundle\XiBreadcrumbsBundle(),
+    );
 
-```php
-<?php
-    new Xi\Bundle\BreadcrumbsBundle\XiBreadcrumbsBundle(),
-?>
+    ...
+}
 ```
 
 
