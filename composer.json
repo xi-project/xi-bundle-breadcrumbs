@@ -31,7 +31,7 @@
         "symfony/form": "2.1.*"
     },
     "suggest": {
-        "besimple/i18n-routing-bundle": "Enables internationalised routes and breaadcrumbs."
+        "besimple/i18n-routing-bundle": "Enables internationalised routes and breadcrumbs."
     },
     "autoload": {
         "psr-0": {
