@@ -196,7 +196,39 @@ class BreadcrumbService
                         // pass
                     }
                 }
-
+                
+                if ($route->hasDefault('properties')) {
+                    $request = $this->container->get('request');
+                    foreach ($params as $key => $param) {
+                        // ignore irrelevant params
+                        if (in_array($key, array('_controller', '_route', 'parent', 'label', 'properties'))) {
+                            continue;
+                        }
+                        // get entity from request
+                        $entity = $request->attributes->get($key);
+                        $properties = $route->getDefault('properties');
+                        if (is_object($entity)) {
+                            // get value from propery, getter method or __toString()
+                            if (key_exists($key, $properties)) {
+                                $reflector = new \ReflectionClass(get_class($entity));
+                                $property = $properties[$key];
+                                $getter = 'get' . ucfirst($property);
+                                if ($reflector->hasProperty($property)
+                                    && $reflector->getProperty($property)->isPublic()
+                                ) {
+                                    $params[$key] = $entity->{$property};
+                                } elseif ($reflector->hasMethod($getter)
+                                    && $reflector->getMethod($getter)->isPublic()
+                                ) {
+                                    $params[$key] = $entity->{$getter}();
+                                } elseif ($reflector->hasMethod('__toString')) {
+                                    $params[$key] = (string) $entity;
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 return $this->applyParams($label,  $this->matchParams($name, $params, true));
             } else {
                 return $name;
