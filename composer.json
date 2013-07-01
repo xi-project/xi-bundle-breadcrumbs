@@ -10,6 +10,12 @@
             "email": "xi.devs@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "http://github.com/smottt/BeSimpleI18nRoutingBundle"
+        }
+    ],
     "require": {
         "symfony/framework-bundle": ">=2.1.0",
         "symfony/locale": ">=2.1.0",
@@ -17,7 +23,7 @@
         "symfony/yaml": ">=2.1.0"
     },
     "require-dev": {
-        "besimple/i18n-routing-bundle": "*",
+        "besimple/i18n-routing-bundle": "dev-master",
         "symfony/browser-kit": ">=2.1.0",
         "symfony/class-loader": ">=2.1.0",
         "symfony/css-selector": ">=2.1.0",
@@ -32,5 +38,6 @@
             "Xi\\Bundle\\BreadcrumbsBundle": ""
         }
     },
+    "minimum-stability": "dev",
     "target-dir": "Xi/Bundle/BreadcrumbsBundle"
 }
