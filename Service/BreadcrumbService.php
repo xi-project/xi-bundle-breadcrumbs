@@ -113,8 +113,8 @@ class BreadcrumbService
                 array_merge($parents, array($name)) as $current
             ) {
                 $breadcrumbs[$current] = new Breadcrumb(
-                    $this->getLabel($current, $params),
-                    $this->getUrl($current, $params)
+                    $this->getLabel($current, $current === $name ? $params : []),
+                    $this->getUrl($current, $current === $name ? $params : [])
                 );
             }
         }
