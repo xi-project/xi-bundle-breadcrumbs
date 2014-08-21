@@ -144,11 +144,17 @@ class BreadcrumbService
     {
         $parents = array();
         $parent = $this->getParent($route);
+        $counter = 0;
 
-        // Prevents circular loops by checking that the key doesn't exist already
-        while ($parent && $parent !== $route && !array_key_exists($parent, $parents)) {
-            $parents[$parent] = count($parents);
-            $parent = $this->getParent($parent);
+        // Prevents circular loops by checking that the key doesn't exist already and authorize single parent
+        while ($parent && !array_key_exists($parent, $parents)) {
+            if ($counter == 0 || ($counter > 0 && $parent !== $route)) {
+                ++$counter;
+                $parents[$parent] = count($parents);
+                $parent = $this->getParent($parent);
+            } else {
+                break;
+            }
         }
 
         return array_reverse(array_flip($parents));
@@ -299,7 +305,7 @@ class BreadcrumbService
 
     private function localizeName($name, $locale = null)
     {
-        return ($locale or $locale = Locale::getDefault()) ? $name .'.'. $locale : $name;
+        return ($locale || $locale = Locale::getDefault()) ? $name .'.'. $locale : $name;
     }
 
     private function getHash($route, $params)

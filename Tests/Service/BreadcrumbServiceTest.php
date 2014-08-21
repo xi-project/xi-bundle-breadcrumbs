@@ -171,8 +171,8 @@ class BreadcrumbServiceTest extends ContainerTestCase
     {
         $this->useRouter('circular.yml');
 
-        $this->assertEquals(array(), $this->service->getBreadcrumbs('loop'));
-        $this->assertEquals(array(), $this->service->getParents('loop'));
+        $this->assertEquals(array('loop' => new Breadcrumb('loop', '/loop')), $this->service->getBreadcrumbs('loop'));
+        $this->assertEquals(array('loop'), $this->service->getParents('loop'));
 
         $this->assertEquals(array('flip'), $this->service->getParents('flop'));
         $this->assertEquals(array('flop'), $this->service->getParents('flip'));
@@ -186,6 +186,7 @@ class BreadcrumbServiceTest extends ContainerTestCase
             'c' => new Breadcrumb('c', '/c'),
             'r' => new Breadcrumb('r', '/r')
         );
+
         $this->assertEquals(
             $this->array_get($cycle, array('c', 'd', 'a')),
             $this->service->getBreadcrumbs('c')
